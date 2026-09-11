@@ -1,0 +1,194 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>WebGIS Pertama Saya</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>WebGIS Sederhana</h1>
+
+    <div id="map"></div>
+
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+
+        // =====================================
+        // 1. MEMBUAT PETA
+        // =====================================
+
+        var map = L.map('map').setView(
+            [-3.214401, 104.649303],
+            10
+        );
+
+
+        // =====================================
+        // 2. BASEMAP OPENSTREETMAP
+        // =====================================
+
+        var osm = L.tileLayer(
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                attribution: '&copy; OpenStreetMap contributors'
+            }
+        ).addTo(map);
+
+
+        // =====================================
+        // 3. BASEMAP SATELLITE
+        // =====================================
+
+        var satellite = L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/' +
+            'World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            {
+                attribution: 'Tiles &copy; Esri'
+            }
+        );
+
+
+        // =====================================
+        // 4. MARKER UNIVERSITAS SRIWIJAYA
+        // =====================================
+
+        var unsri = L.marker([-2.99, 104.76]).addTo(map);
+
+        unsri.bindPopup(
+            "<b>Universitas Sriwijaya</b><br>" +
+            "Palembang, Sumatera Selatan"
+        );
+
+
+        // =====================================
+        // 5. MARKER MUARA SUNGSANG
+        // =====================================
+
+        var sungsang = L.marker([-2.38, 104.90]);
+
+        sungsang.bindPopup(
+            "<b>Muara Sungsang</b><br>" +
+            "Lokasi penelitian pasang surut"
+        );
+
+
+        // =====================================
+        // 6. MARKER SUNGAI MUSI
+        // =====================================
+
+        var musi = L.marker([-2.99, 104.76]);
+
+        musi.bindPopup(
+            "<b>Sungai Musi</b><br>" +
+            "Wilayah pengamatan pasang surut"
+        );
+
+
+        // =====================================
+        // 7. MEMBUAT KELOMPOK LOKASI PENELITIAN
+        // =====================================
+
+        var lokasiPenelitian = L.layerGroup([
+            unsri,
+            sungsang,
+            musi
+        ]).addTo(map);
+
+
+        // =====================================
+        // 8. LAYER CONTROL
+        // =====================================
+
+        var baseMaps = {
+            "OpenStreetMap": osm,
+            "Satellite": satellite
+        };
+
+        var overlayMaps = {
+            "Lokasi Penelitian": lokasiPenelitian
+        };
+
+        L.control.layers(
+            baseMaps,
+            overlayMaps
+        ).addTo(map);
+
+// =====================================
+// 9. MEMBACA DATA GEOJSON
+// =====================================
+
+fetch('wilayah.geojson')
+    .then(response => response.json())
+    .then(data => {
+
+        var wilayah = L.geoJSON(data, {
+
+            // STYLE POLYGON
+            style: {
+                color: "blue",
+                weight: 2,
+                fillColor: "lightblue",
+                fillOpacity: 0.5
+            },
+
+            // POPUP
+            onEachFeature: function(feature, layer) {
+
+                layer.bindPopup(
+                    "<b>" + feature.properties.nama + "</b><br>" +
+                    "Kabupaten: " + feature.properties.kabupaten + "<br>" +
+                    "Provinsi: " + feature.properties.provinsi + "<br>" +
+                    "Status: " + feature.properties.status
+                );
+
+
+                // HOVER
+                layer.on({
+                    mouseover: function(e) {
+
+                        e.target.setStyle({
+                            weight: 4,
+                            fillOpacity: 0.8
+                        });
+
+                    },
+
+                    mouseout: function(e) {
+
+                        e.target.setStyle({
+                            weight: 2,
+                            fillOpacity: 0.5
+                        });
+
+                    }
+                });
+
+            }
+
+        }).addTo(map);
+
+    });
+
+    </script>
+
+</body>
+</html>
+```

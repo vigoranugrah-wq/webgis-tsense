@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nama": "Desa SUngsang",
+        "kabupaten": "Banyuasin",
+        "provinsi": "Sumatera Selatan",
+        "status": "Wilayah Pesisir"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [104.85, -2.30],
+            [104.95, -2.30],
+            [104.95, -2.40],
+            [104.85, -2.40],
+            [104.85, -2.30]
+          ]
+        ]
+      }
+    }
+  ]
+}
